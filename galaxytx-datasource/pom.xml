@@ -48,6 +48,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.galaxytx</groupId>
             <artifactId>galaxytx-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
