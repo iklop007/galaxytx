@@ -1,0 +1,7 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.galaxytx.spring.GalaxyTxAutoConfiguration
+
+# Configuration Properties
+org.springframework.boot.context.properties.EnableConfigurationProperties=\
+com.galaxytx.spring.GalaxyTxProperties

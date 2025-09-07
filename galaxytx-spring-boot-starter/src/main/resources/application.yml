@@ -1,0 +1,60 @@
+spring:
+  application:
+   name: galaxytx-spring-boot-starter
+galaxytx:
+  enabled: true
+  application-id: order-service
+  tx-service-group: order-group
+
+  server:
+    address: 192.168.1.100
+    port: 8091
+    cluster-nodes: 192.168.1.100:8091,192.168.1.101:8091,192.168.1.102:8091
+    worker-threads: 8
+    request-timeout: 5000
+
+  client:
+    reconnect-interval: 1000
+    max-reconnect-attempts: 10
+    request-timeout: 3000
+    heartbeat-interval: 30000
+    load-balance-type: round_robin
+
+  transaction:
+    default-timeout: 60000
+    max-timeout: 300000
+    branch-timeout: 30000
+    mode: AT
+    global-lock-enabled: true
+    lock-timeout: 10000
+    lock-retry-interval: 10
+    lock-max-retries: 30
+    fail-fast-enabled: true
+
+  data-source:
+    enabled: true
+    mode: ALL
+    resource-group-id: order-db-group
+    auto-proxy: true
+    data-source-pattern: ".*DataSource"
+    exclude-data-source-pattern: ".*readOnly.*"
+    sql-parse-cache-enabled: true
+
+  retry:
+    enabled: true
+    max-attempts: 3
+    initial-interval: 1000
+    multiplier: 1.5
+    max-interval: 10000
+    exponential-backoff: true
+
+  monitor:
+    enabled: true
+    report-interval: 60000
+    metrics-enabled: true
+    logging-enabled: true
+    tracing-enabled: true
+    storage-type: MEMORY
+    retention-hours: 72
+    slow-tx-alarm-enabled: true
+    slow-tx-threshold: 5000

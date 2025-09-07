@@ -1,0 +1,23 @@
+# application.yml
+galaxytx:
+  service-discovery:
+    enabled: true
+    discovery-type: consul
+    default-protocol: http
+    default-domain: example.com
+    default-port: 8080
+    cache-duration: 300000
+    retry-attempts: 3
+    retry-interval: 1000
+    service-mappings:
+      user-service: http://user-service.production.svc.cluster.local:8080
+      order-service: https://api.orders.example.com
+      inventory-service: http://inventory-service:8080
+
+# 或者使用Spring环境配置
+#galaxytx:
+#  service:
+#    mapping:
+#      user-service: http://localhost:8081
+#      order-service: http://localhost:8082
+#      payment-service: https://api.payments.com/v1
