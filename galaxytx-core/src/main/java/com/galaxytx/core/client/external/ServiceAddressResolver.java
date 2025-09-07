@@ -30,10 +30,10 @@ public class ServiceAddressResolver {
     private static final long FAILURE_CACHE_DURATION = 30000; // 30秒
 
     @Autowired(required = false)
-    private ServiceDiscoveryConfig serviceDiscoveryConfig;
+    private static ServiceDiscoveryConfig serviceDiscoveryConfig;
 
     @Autowired(required = false)
-    private Environment environment;
+    private static Environment environment;
 
     // 服务发现客户端（可选）
     private Object serviceDiscoveryClient;
@@ -85,7 +85,7 @@ public class ServiceAddressResolver {
     /**
      * 解析服务地址（核心逻辑）
      */
-    private String resolveServiceAddress(String resourceId) {
+    private static String resolveServiceAddress(String resourceId) {
         // 1. 如果已经是完整的URL，直接返回
         if (isFullUrl(resourceId)) {
             return normalizeUrl(resourceId);
@@ -116,14 +116,14 @@ public class ServiceAddressResolver {
     /**
      * 检查是否是完整的URL
      */
-    private boolean isFullUrl(String resourceId) {
+    private static boolean isFullUrl(String resourceId) {
         return URL_PATTERN.matcher(resourceId).matches();
     }
 
     /**
      * 规范化URL
      */
-    private String normalizeUrl(String url) {
+    private static String normalizeUrl(String url) {
         try {
             URI uri = new URI(url);
             String normalized = uri.normalize().toString();
@@ -142,7 +142,7 @@ public class ServiceAddressResolver {
     /**
      * 从配置中获取服务地址
      */
-    private String getFromConfiguration(String resourceId) {
+    private static String getFromConfiguration(String resourceId) {
         // 首先检查Spring环境配置
         if (environment != null) {
             String configKey = "galaxytx.service.mapping." + resourceId;
@@ -166,7 +166,7 @@ public class ServiceAddressResolver {
     /**
      * 从服务发现解析地址
      */
-    private String resolveFromServiceDiscovery(String resourceId) {
+    private static String resolveFromServiceDiscovery(String resourceId) {
         // 如果配置了服务发现且可用
         if (serviceDiscoveryConfig != null && serviceDiscoveryConfig.isServiceDiscoveryEnabled()) {
             try {
@@ -182,7 +182,7 @@ public class ServiceAddressResolver {
     /**
      * 实际的服务发现逻辑
      */
-    private String discoverService(String serviceName) {
+    private static String discoverService(String serviceName) {
         // 这里可以集成各种服务发现机制
         // 例如：Consul, Eureka, Nacos, Zookeeper, Kubernetes等
 
@@ -210,7 +210,7 @@ public class ServiceAddressResolver {
     /**
      * 通过模式匹配解析地址
      */
-    private String resolveFromPattern(String resourceId) {
+    private static String resolveFromPattern(String resourceId) {
         // 检查是否是服务名.命名空间的格式
         Matcher namespaceMatcher = SERVICE_WITH_NAMESPACE_PATTERN.matcher(resourceId);
         if (namespaceMatcher.matches()) {
@@ -231,7 +231,7 @@ public class ServiceAddressResolver {
     /**
      * 默认解析策略
      */
-    private String resolveWithDefaultStrategy(String resourceId) {
+    private static String resolveWithDefaultStrategy(String resourceId) {
         // 1. 尝试作为服务名处理
         if (SERVICE_NAME_PATTERN.matcher(resourceId).matches()) {
             return buildDefaultServiceUrl(resourceId);
@@ -249,7 +249,7 @@ public class ServiceAddressResolver {
     /**
      * 构建默认的服务URL
      */
-    private String buildDefaultServiceUrl(String serviceName) {
+    private static String buildDefaultServiceUrl(String serviceName) {
         String protocol = serviceDiscoveryConfig != null ?
                 serviceDiscoveryConfig.getDefaultProtocol() : "http";
         String domain = serviceDiscoveryConfig != null ?
@@ -263,7 +263,7 @@ public class ServiceAddressResolver {
     /**
      * 从主机名构建URL
      */
-    private String buildUrlFromHostname(String hostname) {
+    private static String buildUrlFromHostname(String hostname) {
         String protocol = serviceDiscoveryConfig != null ?
                 serviceDiscoveryConfig.getDefaultProtocol() : "http";
         int port = serviceDiscoveryConfig != null ?
@@ -275,7 +275,7 @@ public class ServiceAddressResolver {
     /**
      * 尝试常见模式
      */
-    private String tryCommonPatterns(String serviceName) {
+    private static String tryCommonPatterns(String serviceName) {
         List<String> patterns = Arrays.asList(
                 "http://" + serviceName + ".service.consul",
                 "http://" + serviceName + ".default.svc.cluster.local",
@@ -298,7 +298,7 @@ public class ServiceAddressResolver {
     /**
      * 验证服务地址格式
      */
-    private void validateServiceAddress(String address) {
+    private static void validateServiceAddress(String address) {
         try {
             URI uri = new URI(address);
             if (uri.getScheme() == null) {
@@ -315,7 +315,7 @@ public class ServiceAddressResolver {
     /**
      * 失败缓存管理
      */
-    private boolean isInFailureCache(String resourceId) {
+    private static boolean isInFailureCache(String resourceId) {
         Long failureTime = FAILED_SERVICE_CACHE.get(resourceId);
         if (failureTime != null) {
             long currentTime = System.currentTimeMillis();
@@ -329,7 +329,7 @@ public class ServiceAddressResolver {
         return false;
     }
 
-    private void addToFailureCache(String resourceId) {
+    private static void addToFailureCache(String resourceId) {
         FAILED_SERVICE_CACHE.put(resourceId, System.currentTimeMillis());
     }
 
@@ -348,7 +348,7 @@ public class ServiceAddressResolver {
 
     // 以下是一些服务发现的示例实现（需要相应的客户端依赖）
 
-    private String discoverWithConsul(String serviceName) {
+    private static String discoverWithConsul(String serviceName) {
         logger.debug("Discovering service with Consul: {}", serviceName);
         // 实际集成需要consul客户端
         // ConsulClient client = new ConsulClient();
@@ -357,36 +357,36 @@ public class ServiceAddressResolver {
         return null;
     }
 
-    private String discoverWithEureka(String serviceName) {
+    private static String discoverWithEureka(String serviceName) {
         logger.debug("Discovering service with Eureka: {}", serviceName);
         // 需要Eureka客户端
         return null;
     }
 
-    private String discoverWithNacos(String serviceName) {
+    private static String discoverWithNacos(String serviceName) {
         logger.debug("Discovering service with Nacos: {}", serviceName);
         // 需要Nacos客户端
         return null;
     }
 
-    private String discoverWithKubernetes(String serviceName) {
+    private static String discoverWithKubernetes(String serviceName) {
         logger.debug("Discovering service with Kubernetes: {}", serviceName);
         // Kubernetes服务发现逻辑
         return String.format("http://%s.default.svc.cluster.local:8080", serviceName);
     }
 
-    private String discoverWithStaticConfig(String serviceName) {
+    private static String discoverWithStaticConfig(String serviceName) {
         logger.debug("Discovering service with static config: {}", serviceName);
         return getFromConfiguration(serviceName);
     }
 
-    private String discoverWithDns(String serviceName) {
+    private static String discoverWithDns(String serviceName) {
         logger.debug("Discovering service with DNS: {}", serviceName);
         // DNS服务发现
         return String.format("http://%s:8080", serviceName);
     }
 
-    private String resolveNamespacedService(String serviceName, String namespace) {
+    private static String resolveNamespacedService(String serviceName, String namespace) {
         // 处理带命名空间的服务
         if ("default".equalsIgnoreCase(namespace)) {
             return buildDefaultServiceUrl(serviceName);
@@ -394,12 +394,12 @@ public class ServiceAddressResolver {
         return String.format("http://%s.%s.svc.cluster.local:8080", serviceName, namespace);
     }
 
-    private boolean isLikelyHostname(String resourceId) {
+    private static boolean isLikelyHostname(String resourceId) {
         // 简单的主机名验证
         return resourceId.contains(".") && !resourceId.contains("/") && !resourceId.contains(":");
     }
 
-    private boolean isLikelyValidUrl(String url) {
+    private static boolean isLikelyValidUrl(String url) {
         try {
             new URI(url);
             return true;
