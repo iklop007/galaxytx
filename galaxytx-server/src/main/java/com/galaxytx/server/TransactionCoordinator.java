@@ -3,15 +3,23 @@ package com.galaxytx.server;
 import com.galaxytx.core.client.external.ExternalServiceClient;
 import com.galaxytx.core.client.external.ExternalServiceClientFactory;
 import com.galaxytx.core.client.external.ServiceAddressResolver;
+import com.galaxytx.core.exception.MessageQueueException;
 import com.galaxytx.core.exception.NetworkException;
 import com.galaxytx.core.exception.NetworkExceptionUtils;
+import com.galaxytx.core.exception.TCCException;
 import com.galaxytx.core.model.BranchStatus;
 import com.galaxytx.core.model.BranchTransaction;
 import com.galaxytx.core.model.CommunicationResult;
 import com.galaxytx.core.model.GlobalTransaction;
+import com.galaxytx.core.resource.DatabaseResourceManager;
+import com.galaxytx.core.resource.MessageQueueManager;
+import com.galaxytx.core.resource.TCCResourceManager;
+import com.galaxytx.core.resource.TCCResourceManagerFactory;
+import com.galaxytx.core.util.SpringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -34,7 +42,6 @@ public class TransactionCoordinator {
     private final Map<String, GlobalTransaction> globalTransactions = new ConcurrentHashMap<>();
     private final Map<Long, BranchTransaction> branchTransactions = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
 
     public TransactionCoordinator() {
         // 启动定时任务，检查超时事务
@@ -359,25 +366,17 @@ public class TransactionCoordinator {
     private CommunicationResult communicateWithDatabaseRM(BranchTransaction branch, String operation) {
         // 数据库资源的提交/回滚通常通过JDBC驱动完成
         // 这里可以集成各种数据库的特定逻辑
-
-        /*String resourceId = branch.getResourceId();
-
-        try {
-            if ("commit".equals(operation)) {
-                // 执行数据库提交
-                boolean success = databaseResourceManager.commit(branch);
-                return success ? CommunicationResult.success() :
-                        CommunicationResult.failure("Database commit failed");
-            } else {
-                // 执行数据库回滚
-                boolean success = databaseResourceManager.rollback(branch);
-                return success ? CommunicationResult.success() :
-                        CommunicationResult.failure("Database rollback failed");
-            }
-        } catch (SQLException e) {
-            return handleDatabaseException(e, resourceId, operation);
-        }*/
-        return CommunicationResult.success();
+        DatabaseResourceManager databaseResourceManager = SpringUtil.getBean(DatabaseResourceManager.class);
+        String resourceId = branch.getResourceId();
+        if ("commit".equals(operation)) {
+            // 执行数据库提交
+            assert databaseResourceManager != null;
+            return databaseResourceManager.commit(branch);
+        } else {
+            // 执行数据库回滚
+            assert databaseResourceManager != null;
+            return databaseResourceManager.rollback(branch);
+        }
     }
 
     /**
@@ -385,8 +384,8 @@ public class TransactionCoordinator {
      */
     private CommunicationResult communicateWithMessageQueueRM(BranchTransaction branch, String operation) {
         // 消息队列的提交/回滚可能涉及消息确认或重投递
-
-        /*try {
+        MessageQueueManager messageQueueManager = SpringUtil.getBean(MessageQueueManager.class);
+        try {
             if ("commit".equals(operation)) {
                 return messageQueueManager.confirmMessage(branch);
             } else {
@@ -394,8 +393,7 @@ public class TransactionCoordinator {
             }
         } catch (MessageQueueException e) {
             return CommunicationResult.failure("Message queue error: " + e.getMessage());
-        }*/
-        return CommunicationResult.success();
+        }
     }
 
     /**
@@ -450,40 +448,66 @@ public class TransactionCoordinator {
      * 与TCC资源管理器通信
      */
     private CommunicationResult communicateWithTCCRM(BranchTransaction branch, String operation) {
-        // TCC模式的Confirm/Cancel操作
+        String resourceId = branch.getResourceId();
+        String xid = branch.getXid();
+        long branchId = branch.getBranchId();
 
-//        try {
-//            TCCResourceManager tccManager = getTCCResourceManager(branch.getResourceId());
-//
-//            if ("commit".equals(operation)) {
-//                return tccManager.confirm(branch.getXid(), branch.getBranchId());
-//            } else {
-//                return tccManager.cancel(branch.getXid(), branch.getBranchId());
-//            }
-//        } catch (TCCException e) {
-//            return CommunicationResult.failure("TCC operation failed: " + e.getMessage());
-//        }
-        return null;
+        logger.info("Communicating with TCC resource manager: resourceId={}, operation={}, xid={}, branchId={}",
+                resourceId, operation, xid, branchId);
+
+        try {
+            TCCResourceManager tccManager = TCCResourceManagerFactory.getTCCResourceManager(resourceId);
+
+            if ("commit".equals(operation)) {
+                CommunicationResult result = tccManager.confirm(branch);
+                logger.debug("TCC confirm result for {}: {}", resourceId, result.isSuccess());
+                return result;
+            } else {
+                CommunicationResult result = tccManager.cancel(branch);
+                logger.debug("TCC cancel result for {}: {}", resourceId, result.isSuccess());
+                return result;
+            }
+        } catch (TCCException e) {
+            logger.error("TCC operation failed: resourceId={}, operation={}", resourceId, operation, e);
+            return CommunicationResult.failure("TCC operation failed: " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Unexpected error during TCC operation: resourceId={}, operation={}", resourceId, operation, e);
+            return CommunicationResult.failure("Unexpected error: " + e.getMessage());
+        }
     }
+
+
 
     /**
      * 处理数据库异常
      */
-//    private CommunicationResult handleDatabaseException(SQLException e, String resourceId, String operation) {
-//        String sqlState = e.getSQLState();
-//        int errorCode = e.getErrorCode();
-//
-//        // 根据不同的数据库错误码进行处理
-//        if (isConnectionError(sqlState, errorCode)) {
-//            return CommunicationResult.networkError("Database connection error: " + e.getMessage());
-//        } else if (isTimeoutError(sqlState, errorCode)) {
-//            return CommunicationResult.timeout("Database operation timeout: " + e.getMessage());
-//        } else if (isDeadlockError(sqlState, errorCode)) {
-//            return CommunicationResult.failure("Database deadlock: " + e.getMessage());
-//        } else {
-//            return CommunicationResult.failure("Database error: " + e.getMessage());
-//        }
-//    }
+    private CommunicationResult handleDatabaseException(SQLException e, String resourceId, String operation) {
+        String sqlState = e.getSQLState();
+        int errorCode = e.getErrorCode();
+
+        // 根据不同的数据库错误码进行处理
+        if (isConnectionError(sqlState, errorCode)) {
+            return CommunicationResult.networkError("Database connection error: " + e.getMessage());
+        } else if (isTimeoutError(sqlState, errorCode)) {
+            return CommunicationResult.timeout("Database operation timeout: " + e.getMessage());
+        } else if (isDeadlockError(sqlState, errorCode)) {
+            return CommunicationResult.failure("Database deadlock: " + e.getMessage());
+        } else {
+            return CommunicationResult.failure("Database error: " + e.getMessage());
+        }
+    }
+
+    private boolean isDeadlockError(String sqlState, int errorCode) {
+        return sqlState.startsWith("40") || errorCode == 0;
+    }
+
+    private boolean isTimeoutError(String sqlState, int errorCode) {
+        return sqlState.startsWith("08") || errorCode == 0;
+    }
+
+    private boolean isConnectionError(String sqlState, int errorCode) {
+        return sqlState.startsWith("08") || errorCode == 0;
+    }
 
     /**
      * 获取最大重试次数（根据资源类型和操作类型动态调整）
