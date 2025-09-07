@@ -6,13 +6,12 @@
         <groupId>com.galaxytx</groupId>
         <artifactId>galaxytx</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <!--<relativePath/> --><!-- lookup parent from repository -->
     </parent>
-    <artifactId>galaxytx-datasource</artifactId>
+    <artifactId>galaxytx-common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>galaxytx-datasource</name>
-    <description>galaxytx-datasource</description>
+    <name>galaxytx-common</name>
+    <description>galaxytx-common</description>
     <url/>
     <licenses>
         <license/>
@@ -35,30 +34,21 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- JSqlParser SQL 解析器 -->
-        <dependency>
-            <groupId>com.github.jsqlparser</groupId>
-            <artifactId>jsqlparser</artifactId>
-            <version>4.5</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.galaxytx</groupId>
-            <artifactId>galaxytx-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-test</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+        <!--        <dependency>-->
+<!--            <groupId>com.galaxytx</groupId>-->
+<!--            <artifactId>galaxytx-core</artifactId>-->
+<!--            <version>0.0.1-SNAPSHOT</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.galaxytx</groupId>-->
+<!--            <artifactId>galaxytx-datasource</artifactId>-->
+<!--            <version>0.0.1-SNAPSHOT</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

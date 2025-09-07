@@ -1,11 +1,11 @@
 package com.galaxytx.server;
 
-import com.galaxytx.core.model.BranchTransaction;
-import com.galaxytx.core.protocol.MessageType;
-import com.galaxytx.core.protocol.ProtocolDecoder;
-import com.galaxytx.core.protocol.ProtocolEncoder;
-import com.galaxytx.core.protocol.RpcMessage;
-import com.galaxytx.core.model.GlobalTransaction;
+import com.galaxytx.common.model.BranchTransaction;
+import com.galaxytx.common.protocol.MessageType;
+import com.galaxytx.common.protocol.ProtocolDecoder;
+import com.galaxytx.common.protocol.ProtocolEncoder;
+import com.galaxytx.common.protocol.RpcMessage;
+import com.galaxytx.common.model.GlobalTransaction;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;

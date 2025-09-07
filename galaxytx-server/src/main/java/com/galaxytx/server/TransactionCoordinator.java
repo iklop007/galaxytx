@@ -1,21 +1,21 @@
 package com.galaxytx.server;
 
-import com.galaxytx.core.client.external.ExternalServiceClient;
-import com.galaxytx.core.client.external.ExternalServiceClientFactory;
-import com.galaxytx.core.client.external.ServiceAddressResolver;
-import com.galaxytx.core.exception.MessageQueueException;
-import com.galaxytx.core.exception.NetworkException;
-import com.galaxytx.core.exception.NetworkExceptionUtils;
-import com.galaxytx.core.exception.TCCException;
-import com.galaxytx.core.model.BranchStatus;
-import com.galaxytx.core.model.BranchTransaction;
-import com.galaxytx.core.model.CommunicationResult;
-import com.galaxytx.core.model.GlobalTransaction;
-import com.galaxytx.core.resource.DatabaseResourceManager;
-import com.galaxytx.core.resource.MessageQueueManager;
-import com.galaxytx.core.resource.TCCResourceManager;
-import com.galaxytx.core.resource.TCCResourceManagerFactory;
-import com.galaxytx.core.util.SpringUtil;
+import com.galaxytx.common.client.external.ExternalServiceClient;
+import com.galaxytx.common.client.external.ExternalServiceClientFactory;
+import com.galaxytx.common.client.external.ServiceAddressResolver;
+import com.galaxytx.common.exception.MessageQueueException;
+import com.galaxytx.common.exception.NetworkException;
+import com.galaxytx.common.exception.NetworkExceptionUtils;
+import com.galaxytx.common.exception.TCCException;
+import com.galaxytx.common.model.BranchStatus;
+import com.galaxytx.common.model.BranchTransaction;
+import com.galaxytx.common.model.CommunicationResult;
+import com.galaxytx.common.model.GlobalTransaction;
+import com.galaxytx.common.resource.DatabaseResourceManager;
+import com.galaxytx.common.resource.MessageQueueManager;
+import com.galaxytx.common.resource.TCCResourceManager;
+import com.galaxytx.common.resource.TCCResourceManagerFactory;
+import com.galaxytx.common.util.SpringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

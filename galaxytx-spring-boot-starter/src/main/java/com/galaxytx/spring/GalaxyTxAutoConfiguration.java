@@ -1,6 +1,6 @@
 package com.galaxytx.spring;
 
-import com.galaxytx.core.client.TcClient;
+import com.galaxytx.common.client.TcClient;
 import com.galaxytx.datasource.DataSourceProxy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

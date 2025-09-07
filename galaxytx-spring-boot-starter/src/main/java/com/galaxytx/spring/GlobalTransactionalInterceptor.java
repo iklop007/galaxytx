@@ -1,7 +1,7 @@
 package com.galaxytx.spring;
 
-import com.galaxytx.core.client.TcClient;
-import com.galaxytx.core.common.TransactionContext;
+import com.galaxytx.common.client.TcClient;
+import com.galaxytx.common.common.TransactionContext;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;

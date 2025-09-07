@@ -6,7 +6,7 @@
 		<groupId>com.galaxytx</groupId>
 		<artifactId>galaxytx</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<!--<relativePath/>--> <!-- lookup parent from repository -->
 	</parent>
 	<artifactId>galaxytx-spring-boot-starter</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -43,7 +43,7 @@
 
 		<dependency>
 			<groupId>com.galaxytx</groupId>
-			<artifactId>galaxytx-core</artifactId>
+			<artifactId>galaxytx-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

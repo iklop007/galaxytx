@@ -6,7 +6,7 @@
 		<groupId>com.galaxytx</groupId>
 		<artifactId>galaxytx</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<!--<relativePath/>--> <!-- lookup parent from repository -->
 	</parent>
 	<artifactId>galaxytx-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>

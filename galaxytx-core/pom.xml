@@ -6,7 +6,7 @@
         <groupId>com.galaxytx</groupId>
         <artifactId>galaxytx</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/>
+        <!--<relativePath/>-->
     </parent>
     <artifactId>galaxytx-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -75,9 +75,10 @@
 
         <dependency>
             <groupId>com.galaxytx</groupId>
-            <artifactId>galaxytx-datasource</artifactId>
+            <artifactId>galaxytx-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -85,6 +86,15 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.5.5</version>
+                <executions>
+                    <execution>
+                        <id>repackage</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

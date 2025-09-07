@@ -34,6 +34,7 @@
 		<module>galaxytx-datasource</module>
 		<module>galaxytx-spring-boot-starter</module>
 		<module>galaxytx-server</module>
+		<module>galaxytx-common</module>
 	</modules>
 
 	<properties>
